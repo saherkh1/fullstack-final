@@ -1,4 +1,5 @@
 global.config = global.process.env.NODE_ENV === "production" ? require("./config-prod.json") : require("./config-dev.json");
+require("./data-access-layer/dal"); 
 const express = require("express");
 const cors = require("cors");
 const sanitize = require("./middleware/sanitize")
@@ -28,7 +29,7 @@ server.use(express.json());
 server.use(expressFileUpload()); // Insert the uploaded file into request.files object
 server.use(cors());
 
-//server.use("/api/auth", authController);
+server.use("/api/auth", authController);
 server.use("/api", shopController);
 server.use("*", (request, response) => {
     console.log(request.baseUrl);

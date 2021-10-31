@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const CartSchema = mongoose.Schema({
     userId: mongoose.Schema.Types.ObjectId,
-    cartProducts: [mongoose.Schema.Types.ObjectId],
     createDate: Date,
 },
     {
@@ -14,12 +13,6 @@ CartSchema.virtual("user", {
     localField: "userId",
     foreignField: "_id",
     justOne: true
-});
-CartSchema.virtual("cartProduct", {
-    ref: "CartProductModel",
-    localField: "cartProducts",
-    foreignField: "_id",
-    justOne: false
 });
 
 const CartModel = mongoose.model("CartModel", CartSchema, "Carts");

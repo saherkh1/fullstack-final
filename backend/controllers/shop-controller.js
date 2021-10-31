@@ -7,6 +7,8 @@ const errorsHelper = require("../helpers/errors-helper");
 const locations = require("../helpers/locations");
 const handleImage = require("../middleware/image-handler");
 const { imageExist } = require("../helpers/image-helper");
+const CartProductModel = require("../models/cart-product-model");
+const { Mongoose } = require("mongoose");
 
 const router = express.Router();
 //get all products
@@ -87,16 +89,50 @@ router.get("/images/:imageName", async (request, response) => {
         errorsHelper.internalServerError(response, err);
     }
 });
-//Get Cart
-router.get("/cart", async (request, response) => {
+router.get("/cart/products/:cartId", async (request, response) => {
     try {
-        const cart = await shopLogic.getCartAsync();
+        const cartId = request.params.cartId;
+        const cart = await shopLogic.GetAllCartProductsAsync(cartId);
         response.json(cart);
     }
     catch (err) {
         response.status(500).send(err.message);
     }
 });
+//Get Cart
+router.get("/cart/:userId", async (request, response) => {
+    try {
+        const userId = request.params.userId;
+        const cart = await shopLogic.getCartAsync(userId);
+        response.json(cart);
+    }
+    catch (err) {
+        response.status(500).send(err.message);
+    }
+});
+router.put("/cart", async (request, response) => {
+    try {
+        console.log("fire! this is the cart product received", request.body)
+        const cartProduct = new CartProductModel(request.body);
+        console.log("This is the cart product created", cartProduct);
 
+        const responseProduct = await shopLogic.addToCartAsync(cartProduct);
+        console.log("This is the cart product sentBack", responseProduct);
+        response.json(responseProduct);
+    } catch (err) {
+        response.status(500).send(err.message);
+    }
+});
+
+router.delete("/cart/:cartId", async (request, response) => {
+    try {
+        const cartId = request.params.cartId;
+        await shopLogic.deleteFromCartAsync(cartId);
+        response.status(204);
+    }
+    catch (err) {
+        response.status(500).send(err.message);
+    }
+});
 
 module.exports = router;

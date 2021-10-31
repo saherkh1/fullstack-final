@@ -1,10 +1,9 @@
-const dal = require("../data-access-layer/dal");
 const CartModel = require("../models/cart-model");
 const ProductModel = require("../models/product-model");
 const CartProductModel = require("../models/cart-product-model");
 const ProductCategoryModel = require("../models/Product-category-model");
 const ImageHelper = require("../helpers/image-helper");
-const { Mongoose } = require("mongoose");
+
 
 //product
 function getAllProductsAsync() {
@@ -23,38 +22,80 @@ async function updateProductAsync(newProduct) {
         if (oldProduct.image !== newProduct.image)
             ImageHelper.deleteOldImage(oldProduct.image);
     return ProductModel.findByIdAndUpdate(newProduct._id, newProduct, { returnOriginal: false }).exec();
+    // return ProductModel.findOneAndUpdate(newProduct._id, newProduct, { returnOriginal: false }).exec();
 }
 
 //cart
 async function getCartAsync(userId) {
-    let cart = await CartModel.findOne({ userId: userId }, { sort: { 'createDate': -1 } });
-    console.log("getCartAsync says that the found cart is:", cart);
-    if (cart === null) createNewCart(userId);
-    return cart;
+    try { //workssssss
+        let cart = await CartModel.findOne({ userId }).exec();
+        if (cart === null) cart = createNewCart(userId);
+        console.log("getCartAsync says that the cart is:", cart);
+        return cart.save();
+    } catch (error) {
+        console.error("lol..... ", error);
+    }
 }
-function addToCartAsync(cartProduct) {
-    return cartProduct.save();
+
+async function addToCartAsync(cartProduct) {
+    try {
+        console.log("Searching for this product", cartProduct);
+
+        //search for id 
+        //check if found null 
+        //then 
+        if (cartProduct._id) {
+            //update itemsPrice
+            const foundCartProduct = await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct, { returnOriginal: false }).populate("product").exec();
+            console.log("updated ", foundCartProduct);
+            if (foundCartProduct) { console.log("it is not null! ", foundCartProduct); return foundCartProduct }
+            // return await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct).populate("product").exec();
+        }
+
+        cartProduct = await cartProduct.populate("product");
+        cartProduct.itemsPrice = cartProduct.quantity * cartProduct.product.price;
+        console.log("updated price ", cartProduct);
+        return cartProduct.save();
+    } catch (error) {
+        console.error(error);
+    }
 }
 function deleteFromCartAsync(cartProductId) { //cartProductId = cartProduct._id
     return CartProductModel.findByIdAndDelete(cartProductId).exec();
 }
+// get all products that have been added to this cart
+function GetAllCartProductsAsync(cartId) {
+    return CartProductModel.find({ cartId }).populate("product").exec();
+}
 function updateCartProductAsync(cartProduct) {
     return CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct, { returnOriginal: false }).exec();
 }
-//order
-function createOrderAsync(order) {
-    // createNewCart(order.userId)
-}
+
 function createNewCart(userId) {
-    cart = new CartModel();
-    cart.userId = userId;
-    cart.createDate = new Date();
+    const date = new Date();
+    cart = new CartModel({ userId: userId, createDate: date });
+    // cart.userId = userId;
+    // cart.createDate = new Date();
     console.log("createNewCart created a new cart:", cart);
     return cart;
 }
+
+//order
+function createOrderAsync(order) {
+    createNewCart(order.userId)
+    const cartProducts = CartProductModel.find({ cartId: order.cartId }).populate("product").exec();
+    order.orderDate = new Date();
+    order.totalPrice = 0;
+    cartProducts.forEach(P => {
+        order.totalPrice += P.itemsPrice;
+    });
+    return order.save();
+}
+
 function getAllCategoriesAsync() {
     return ProductCategoryModel.find().exec();
 }
+
 module.exports = {
     getAllProductsAsync,
     addProductAsync,
@@ -62,7 +103,8 @@ module.exports = {
     getCartAsync,
     addToCartAsync,
     deleteFromCartAsync,
-    updateCartProductAsync,
+    GetAllCartProductsAsync,
+    // updateCartProductAsync,
     createOrderAsync,
     getAllCategoriesAsync
 }

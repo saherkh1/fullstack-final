@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const OrderSchema = mongoose.Schema({
     cartId: mongoose.Schema.Types.ObjectId,
-    cityId: mongoose.Schema.Types.ObjectId,
+    userId: mongoose.Schema.Types.ObjectId,
     totalPrice: Number,
+    cityId: mongoose.Schema.Types.ObjectId,
     street: String,
     shippingDate: Date,
     orderDate: Date,
@@ -13,7 +14,7 @@ const OrderSchema = mongoose.Schema({
         versionKey: false,
         toJSON: { virtuals: true }, id: false
     });
- OrderSchema.virtual("city", {
+OrderSchema.virtual("city", {
     ref: "CityModel",
     localField: "cityId",
     foreignField: "_id",

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const CredentialsSchema = mongoose.Schema({
     email: String,
-    Password: String,
+    password: String,
 },
     { versionKey: false });
 const CredentialsModel = mongoose.model("CredentialsModel", CredentialsSchema, "Users");
