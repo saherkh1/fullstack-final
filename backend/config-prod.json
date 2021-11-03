@@ -1,5 +1,8 @@
 {
+    "isProduction": true,
+    "isDevelopment": false,
     "database": {
         "connectionString": ""
-    }
+    },
+    "jwtKey": "ThisIS@awesome"
 }
