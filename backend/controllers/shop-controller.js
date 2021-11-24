@@ -28,7 +28,7 @@ router.post("/products", handleImage, async (request, response) => {
 
         const product = new ProductModel(request.body);
         const returnedProduct = await shopLogic.addProductAsync(product);
-        // console.log(returnedProduct.category)
+        console.log("added product " + returnedProduct)
         response.json(returnedProduct);
     }
     catch (err) {
@@ -92,8 +92,9 @@ router.get("/images/:imageName", async (request, response) => {
 router.get("/cart/products/:cartId", async (request, response) => {
     try {
         const cartId = request.params.cartId;
-        const cart = await shopLogic.GetAllCartProductsAsync(cartId);
-        response.json(cart);
+        const cartProducts = await shopLogic.GetAllCartProductsAsync(cartId);
+        console.log("list of products: " + cartProducts)
+        response.json(cartProducts);
     }
     catch (err) {
         response.status(500).send(err.message);
@@ -110,11 +111,12 @@ router.get("/cart/:userId", async (request, response) => {
         response.status(500).send(err.message);
     }
 });
+// add product to cart
 router.put("/cart", async (request, response) => {
     try {
-        console.log("fire! this is the cart product received", request.body)
+        // console.log("fire! this is the cart product received", request.body)
         const cartProduct = new CartProductModel(request.body);
-        console.log("This is the cart product created", cartProduct);
+        // console.log("This is the cart product created", cartProduct);
 
         const responseProduct = await shopLogic.addToCartAsync(cartProduct);
         console.log("This is the cart product sentBack", responseProduct);
@@ -129,6 +131,17 @@ router.delete("/cart/:cartId", async (request, response) => {
         const cartId = request.params.cartId;
         await shopLogic.deleteFromCartAsync(cartId);
         response.status(204);
+    }
+    catch (err) {
+        response.status(500).send(err.message);
+    }
+});
+//get all cites
+router.get("/city", async (request, response) => {
+    try {
+        const cites = await shopLogic.getAllCitesAsync();
+        // console.log(products);
+        response.json(cites);
     }
     catch (err) {
         response.status(500).send(err.message);

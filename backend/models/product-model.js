@@ -8,7 +8,8 @@ const ProductSchema = mongoose.Schema({
 },
     {
         versionKey: false,
-        toJSON: { virtuals: true }, id: false
+        toJSON: { virtuals: true }
+        , id: false
     });
 ProductSchema.virtual("category", { //add another field with this name
     ref: "ProductCategoryModel", // Foreign collection model

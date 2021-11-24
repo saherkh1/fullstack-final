@@ -1,9 +1,9 @@
+const CityModel = require("../models/city-model");
 const CartModel = require("../models/cart-model");
 const ProductModel = require("../models/product-model");
 const CartProductModel = require("../models/cart-product-model");
 const ProductCategoryModel = require("../models/Product-category-model");
 const ImageHelper = require("../helpers/image-helper");
-
 
 //product
 function getAllProductsAsync() {
@@ -27,7 +27,7 @@ async function updateProductAsync(newProduct) {
 
 //cart
 async function getCartAsync(userId) {
-    try { //workssssss
+    try { //workssssss should add latest lest return 
         let cart = await CartModel.findOne({ userId }).exec();
         if (cart === null) cart = createNewCart(userId);
         console.log("getCartAsync says that the cart is:", cart);
@@ -41,20 +41,17 @@ async function addToCartAsync(cartProduct) {
     try {
         console.log("Searching for this product", cartProduct);
 
-        //search for id 
-        //check if found null 
-        //then 
-        if (cartProduct._id) {
-            //update itemsPrice
-            const foundCartProduct = await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct, { returnOriginal: false }).populate("product").exec();
-            console.log("updated ", foundCartProduct);
-            if (foundCartProduct) { console.log("it is not null! ", foundCartProduct); return foundCartProduct }
-            // return await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct).populate("product").exec();
-        }
-
         cartProduct = await cartProduct.populate("product");
         cartProduct.itemsPrice = cartProduct.quantity * cartProduct.product.price;
+        const foundCartProduct = await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct, { returnOriginal: false }).populate("product").exec();
+        console.log("updated ", foundCartProduct);
+        if (foundCartProduct) {
+            console.log("it is not null! ", foundCartProduct);
+            return foundCartProduct
+        }
+
         console.log("updated price ", cartProduct);
+
         return cartProduct.save();
     } catch (error) {
         console.error(error);
@@ -95,7 +92,10 @@ function createOrderAsync(order) {
 function getAllCategoriesAsync() {
     return ProductCategoryModel.find().exec();
 }
-
+// city 
+function getAllCitesAsync() {
+    return CityModel.find().exec();
+}
 module.exports = {
     getAllProductsAsync,
     addProductAsync,
@@ -106,5 +106,6 @@ module.exports = {
     GetAllCartProductsAsync,
     // updateCartProductAsync,
     createOrderAsync,
+    getAllCitesAsync,
     getAllCategoriesAsync
 }

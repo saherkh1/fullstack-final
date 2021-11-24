@@ -9,13 +9,12 @@ function isDuplicateUserAsync(user) {
 
 async function registerFirstStepAsync(user) {
     user.password = cryptoHelper.hash(user.password);
-    user.verified = false;
-    user.role = "Client";
-    user.token = cryptoHelper.getNewToken(user);
     const newUser = await UserModel.collection.insertOne({
         email: user.email,
         password: user.password,
-        idNumber: user.idNumber
+        idNumber: user.idNumber,
+        role: "Client",
+        verified: false,
     });
     return UserModel.findById(newUser.insertedId).exec();
 }
@@ -24,13 +23,21 @@ async function registerSecondStepAsync(user) {
     user.verified = true;
     // console.log(user.id)
     const id = user._id;
-    return UserModel.findByIdAndUpdate(id, user, { returnOriginal: false }).exec().catch(reason => console.log(reason));
+    const loggedUser = await UserModel.findByIdAndUpdate(id, user, { returnOriginal: false }).exec().catch(reason => console.log(reason));
+    loggedUser.token = cryptoHelper.getNewToken(user);
+    return loggedUser;
 }
 
-function loginAsync(credentials) {
+async function loginAsync(credentials) {
+    try {
         const email = credentials.email;
-        const password = credentials.password
-        return UserModel.findOne({ email, password }).exec();
+        const password = cryptoHelper.hash(credentials.password);
+        const loggedInUser = await UserModel.findOne({ email, password }).exec();
+        loggedInUser.token = cryptoHelper.getNewToken(loggedInUser);
+        return loggedInUser;
+    } catch (err) {
+        console.error(err)
+    }
 }
 module.exports = {
     loginAsync,
