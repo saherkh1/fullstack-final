@@ -58,7 +58,7 @@ async function addToCartAsync(cartProduct) {
     }
 }
 function deleteFromCartAsync(cartProductId) { //cartProductId = cartProduct._id
-    return CartProductModel.findByIdAndDelete(cartProductId).exec();
+    return CartProductModel.findByIdAndDelete(cartProductId);
 }
 // get all products that have been added to this cart
 function GetAllCartProductsAsync(cartId) {

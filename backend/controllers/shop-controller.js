@@ -126,15 +126,16 @@ router.put("/cart", async (request, response) => {
     }
 });
 
-router.delete("/cart/:cartId", async (request, response) => {
+router.delete("/cart/:cartProductId", async (request, response) => {
     try {
-        const cartId = request.params.cartId;
-        await shopLogic.deleteFromCartAsync(cartId);
-        response.status(204);
+        const cartProductId = request.params.cartProductId;
+        await shopLogic.deleteFromCartAsync(cartProductId);
+        response.status(204).send();
     }
     catch (err) {
         response.status(500).send(err.message);
     }
+
 });
 //get all cites
 router.get("/city", async (request, response) => {
