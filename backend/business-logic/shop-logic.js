@@ -89,6 +89,18 @@ function createOrderAsync(order) {
     return order.save();
 }
 
+function getAllOrdersAsync() {
+    return OrderModel.find().exec();
+}
+
+function getLatestOrderAsync(userId) {
+    return OrderModel.findOne({ userId }).sort({ initDate: 'desc' }).populate("user cart").exec();
+}
+
+function addOrderAsync(order) {
+    return order.save();
+}
+//Categories
 function getAllCategoriesAsync() {
     return ProductCategoryModel.find().exec();
 }
@@ -104,8 +116,11 @@ module.exports = {
     addToCartAsync,
     deleteFromCartAsync,
     GetAllCartProductsAsync,
-    // updateCartProductAsync,
+   
     createOrderAsync,
     getAllCitesAsync,
-    getAllCategoriesAsync
+    getAllCategoriesAsync,
+    getLatestOrderAsync,
+    getAllOrdersAsync,
+    addOrderAsync
 }
