@@ -1,10 +1,23 @@
 const mongoose = require("mongoose");
 
 const OrderSchema = mongoose.Schema({
-    cartId: mongoose.Schema.Types.ObjectId,
-    userId: mongoose.Schema.Types.ObjectId,
-    totalPrice: Number,
-    cityId: mongoose.Schema.Types.ObjectId,
+    cartId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, "Cart ID required"],
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, "user ID required"],
+    },
+    totalPrice: {
+        type: Number,
+        required: [true, "price required"],
+        min: [0, "price can't be negative"],
+    },
+    cityId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, "City ID required"],
+    },
     street: String,
     shippingDate: Date,
     orderDate: Date,
@@ -28,4 +41,4 @@ OrderSchema.virtual("cart", {
 });
 const OrderModel = mongoose.model("OrderModel", OrderSchema, "Orders");
 
-module.exports = UserModel;
+module.exports = OrderModel;

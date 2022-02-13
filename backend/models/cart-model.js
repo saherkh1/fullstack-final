@@ -1,8 +1,15 @@
 const mongoose = require("mongoose");
 
 const CartSchema = mongoose.Schema({
-    userId: mongoose.Schema.Types.ObjectId,
-    createDate: Date,
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        require: [true, "user id required"]
+    },
+    createDate: {
+        type: Date,
+        required: [true, "cart date required"],
+        default: Date.now
+    }
 },
     {
         versionKey: false,

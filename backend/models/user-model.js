@@ -13,7 +13,7 @@ const UserSchema = mongoose.Schema({
     email: {
         type: String,
         required: [true, "Missing email."],
-        validate: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 
+        validate: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         unique: true
     },
     idNumber: {
@@ -33,6 +33,7 @@ const UserSchema = mongoose.Schema({
     },
     role: String,
     verified: Boolean,
+    token: String
 },
     {
         versionKey: false,

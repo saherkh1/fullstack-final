@@ -1,21 +1,17 @@
 const express = require("express");
 const shopLogic = require("../business-logic/shop-logic");// business-logic/auth-logic");
-const CredentialsModel = require("../models/credentials-model");
 const ProductModel = require("../models/product-model");
-const UserModel = require("../models/user-model");
 const errorsHelper = require("../helpers/errors-helper");
 const locations = require("../helpers/locations");
 const handleImage = require("../middleware/image-handler");
-const { imageExist } = require("../helpers/image-helper");
 const CartProductModel = require("../models/cart-product-model");
-const { Mongoose } = require("mongoose");
+const OrderModel = require("../models/order-model");
 
 const router = express.Router();
 //get all products
 router.get("/products", async (request, response) => {
     try {
         const products = await shopLogic.getAllProductsAsync();
-        // console.log(products);
         response.json(products);
     }
     catch (err) {
@@ -28,7 +24,6 @@ router.post("/products", handleImage, async (request, response) => {
 
         const product = new ProductModel(request.body);
         const returnedProduct = await shopLogic.addProductAsync(product);
-        console.log("added product " + returnedProduct)
         response.json(returnedProduct);
     }
     catch (err) {
@@ -70,30 +65,11 @@ router.get("/categories", async (request, response) => {
     }
 });
 
-//Get an image 
-router.get("/images/:imageName", async (request, response) => {
-    try {
-        const imageName = request.params.imageName;
-        if (imageName === null || imageName === "undefined")
-            errorsHelper.notFoundError(response, "No Image named: " + imageName);
-        else {
-            const imageToSend = locations.getProductImageFile(imageName);
-            if (!imageExist(imageToSend))
-                errorsHelper.notFoundError(response, "No such image");
-            else
-                response.sendFile(imageToSend);
 
-        }
-    }
-    catch (err) {
-        errorsHelper.internalServerError(response, err);
-    }
-});
 router.get("/cart/products/:cartId", async (request, response) => {
     try {
         const cartId = request.params.cartId;
         const cartProducts = await shopLogic.GetAllCartProductsAsync(cartId);
-        console.log("list of products: " + cartProducts)
         response.json(cartProducts);
     }
     catch (err) {
@@ -114,12 +90,8 @@ router.get("/cart/:userId", async (request, response) => {
 // add product to cart
 router.put("/cart", async (request, response) => {
     try {
-        // console.log("fire! this is the cart product received", request.body)
         const cartProduct = new CartProductModel(request.body);
-        // console.log("This is the cart product created", cartProduct);
-
         const responseProduct = await shopLogic.addToCartAsync(cartProduct);
-        console.log("This is the cart product sentBack", responseProduct);
         response.json(responseProduct);
     } catch (err) {
         response.status(500).send(err.message);
@@ -137,13 +109,11 @@ router.delete("/cart/:cartProductId", async (request, response) => {
     }
 
 });
-router.get("orders/", async (request, response) => {
+router.get("/order/:userId", async (request, response) => {
     try {
+        const userId = request.params.userId;
 
-        console.log("orders");
-
-        const orders = await logic.getAllOrdersAsync();
-        console.log(orders.length);
+        const orders = await shopLogic.getAllOrdersAsync(userId);
         response.json(orders);
     }
     catch (err) {
@@ -151,10 +121,10 @@ router.get("orders/", async (request, response) => {
     }
 });
 
-router.get("orders/:_id", async (request, response) => {
+router.get("/order/:_id", async (request, response) => {
     try {
         const _id = request.params._id;
-        const latestOrder = await logic.getLatestOrderAsync(_id);
+        const latestOrder = await shopLogic.getLatestOrderAsync(_id);
         response.json(latestOrder);
     }
     catch (err) {
@@ -163,14 +133,15 @@ router.get("orders/:_id", async (request, response) => {
 });
 
 
-router.post("orders/", async (request, response) => {
+router.post("/order/", async (request, response) => {
     try {
         const order = new OrderModel(request.body);
-        // Validate: 
-        const errors = await order.validateSync();
-        if (errors) return response.status(400).send(errors.message);
 
-        const addedOrder = await logic.addOrderAsync(order);
+        // Validate: 
+        // const errors = await order.validateSync();
+        // if (errors) return response.status(400).send(errors.message);
+
+        const addedOrder = await shopLogic.createOrderAsync(order);
         response.status(201).json(addedOrder);
     }
     catch (err) {
@@ -181,7 +152,6 @@ router.post("orders/", async (request, response) => {
 router.get("/city", async (request, response) => {
     try {
         const cites = await shopLogic.getAllCitesAsync();
-        // console.log(products);
         response.json(cites);
     }
     catch (err) {

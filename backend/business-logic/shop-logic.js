@@ -27,37 +27,23 @@ async function updateProductAsync(newProduct) {
 
 //cart
 async function getCartAsync(userId) {
-    try { //workssssss should add latest lest return 
-        let cart = await CartModel.findOne({ userId }).exec();
-        if (cart === null) cart = createNewCart(userId);
-        console.log("getCartAsync says that the cart is:", cart);
-        return cart.save();
-    } catch (error) {
-        console.error("lol..... ", error);
-    }
+    let cart = await CartModel.findOne({ userId }, {}, { sort: { createDate: -1 } });
+    if (cart === null) cart = createNewCart(userId);
+    else return cart;
+    return cart.save();
 }
 
 async function addToCartAsync(cartProduct) {
-    try {
-        console.log("Searching for this product", cartProduct);
 
-        cartProduct = await cartProduct.populate("product");
-        cartProduct.itemsPrice = cartProduct.quantity * cartProduct.product.price;
-        const foundCartProduct = await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct, { returnOriginal: false }).populate("product").exec();
-        console.log("updated ", foundCartProduct);
-        if (foundCartProduct) {
-            console.log("it is not null! ", foundCartProduct);
-            return foundCartProduct
-        }
-
-        console.log("updated price ", cartProduct);
-
-        return cartProduct.save();
-    } catch (error) {
-        console.error(error);
+    cartProduct = await cartProduct.populate("product");
+    cartProduct.itemsPrice = cartProduct.quantity * cartProduct.product.price;
+    const foundCartProduct = await CartProductModel.findByIdAndUpdate(cartProduct._id, cartProduct, { returnOriginal: false }).populate("product").exec();
+    if (foundCartProduct) {
+        return foundCartProduct
     }
+    return cartProduct.save();
 }
-function deleteFromCartAsync(cartProductId) { //cartProductId = cartProduct._id
+function deleteFromCartAsync(cartProductId) {
     return CartProductModel.findByIdAndDelete(cartProductId);
 }
 // get all products that have been added to this cart
@@ -71,35 +57,27 @@ function updateCartProductAsync(cartProduct) {
 function createNewCart(userId) {
     const date = new Date();
     cart = new CartModel({ userId: userId, createDate: date });
-    // cart.userId = userId;
-    // cart.createDate = new Date();
-    console.log("createNewCart created a new cart:", cart);
-    return cart;
+    return cart.save();
 }
 
 //order
 function createOrderAsync(order) {
     createNewCart(order.userId)
-    const cartProducts = CartProductModel.find({ cartId: order.cartId }).populate("product").exec();
     order.orderDate = new Date();
-    order.totalPrice = 0;
-    cartProducts.forEach(P => {
-        order.totalPrice += P.itemsPrice;
-    });
     return order.save();
+
+
 }
 
 function getAllOrdersAsync() {
-    return OrderModel.find().exec();
+    return OrderModel.find({ userId }).sort({ initDate: 'desc' }).populate("cart").populate("city").exec();
 }
 
 function getLatestOrderAsync(userId) {
-    return OrderModel.findOne({ userId }).sort({ initDate: 'desc' }).populate("user cart").exec();
+    return OrderModel.findOne({ userId }).sort({ initDate: 'desc' }).populate("cart").populate("city").exec();
 }
 
-function addOrderAsync(order) {
-    return order.save();
-}
+
 //Categories
 function getAllCategoriesAsync() {
     return ProductCategoryModel.find().exec();
@@ -116,11 +94,9 @@ module.exports = {
     addToCartAsync,
     deleteFromCartAsync,
     GetAllCartProductsAsync,
-   
     createOrderAsync,
     getAllCitesAsync,
     getAllCategoriesAsync,
     getLatestOrderAsync,
     getAllOrdersAsync,
-    addOrderAsync
 }

@@ -21,7 +21,6 @@ async function registerFirstStepAsync(user) {
 
 async function registerSecondStepAsync(user) {
     user.verified = true;
-    // console.log(user.id)
     const id = user._id;
     const loggedUser = await UserModel.findByIdAndUpdate(id, user, { returnOriginal: false }).exec().catch(reason => console.log(reason));
     loggedUser.token = cryptoHelper.getNewToken(user);
