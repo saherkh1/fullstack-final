@@ -1,0 +1,33 @@
+<div class="box">
+    <form [formGroup]="productForm" (submit)="update()">
+        <fieldset>
+            <legend>Update Product</legend>
+
+            <label class="form-label mt-4">Name:</label>
+            <input type="text" class="form-control" (change)="changeOccurred()" [formControl]="nameControl">
+            <span *ngIf="nameControl.errors?.required && nameControl.touched">Missing name</span>
+            <span *ngIf="nameControl.errors?.pattern && nameControl.touched">Name must be capitalized</span>
+
+            <label class="form-label mt-4">Price:</label>
+            <input type="number" step="0.01" min="0" max="1000" class="form-control" (change)="changeOccurred()"
+                [formControl]="priceControl">
+            <span *ngIf="priceControl.errors?.required && priceControl.touched">Missing price</span>
+            <span *ngIf="priceControl.errors?.min && priceControl.touched">Price must be positive</span>
+            <span *ngIf="priceControl.errors?.max && priceControl.touched">Price must be less than 1000</span>
+
+            <label class="form-label mt-4">Category: </label>
+            <select class="form-select" (change)="changeOccurred()" [formControl]="categoryControl">
+                <option selected disabled value="">Select Category</option>
+                <option *ngFor="let c of categories" value="{{c._id}}">{{c.category}}</option>
+            </select>
+            <span *ngIf="categoryControl.errors?.required && categoryControl.touched">Missing category</span>
+
+            <label class="form-label mt-4">Choose an image</label>
+            <input type="file" class="form-control" [formControl]="imageControl"
+                (change)="setImage($event); changeOccurred()">
+
+
+            <button class="btn btn-primary">Update</button>
+        </fieldset>
+    </form>
+</div>

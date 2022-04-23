@@ -1,0 +1,26 @@
+a, button {
+    margin: 10px;
+}
+div{
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+.cart-element {
+    
+    position: fixed;
+    margin: 5px;
+    padding: 1em;
+    left: 66%;
+    height: 70%;
+ 
+   } 
+
+.cart-element:hover{
+    overflow-y: scroll;
+   
+}
+.box {
+    width: 25%;
+    height: 500px;
+    
+}

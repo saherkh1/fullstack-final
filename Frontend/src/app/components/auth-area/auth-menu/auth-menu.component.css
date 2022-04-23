@@ -1,0 +1,8 @@
+span {
+    color: white;
+}
+
+span> a {
+    text-decoration: underline;
+    color: white;
+}

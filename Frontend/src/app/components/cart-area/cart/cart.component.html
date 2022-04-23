@@ -1,0 +1,48 @@
+<div class="box">
+    <h3>cart</h3>
+
+    <table *ngIf="cart" class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">price </th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let p of cartProducts" class="table-active">
+                <th scope="row">{{p.product.name }}</th>
+                <td>
+                    <div class="row">
+                        <div class="col">
+
+                            <button (click)="subHandler(p._id)" class="btn btn-outline-info btn-sm">-</button>
+                            {{p.quantity}}
+                            <button (click)="addHandler(p._id)" class="btn btn-outline-info btn-sm">+</button>
+                        </div>
+
+                    </div>
+
+
+                </td>
+                <td>{{p.itemsPrice | currency:"ILS"}}</td>
+                <td><button (click)="deleteHandler(p._id)" class="btn btn-outline-danger btn-sm">X</button></td>
+             
+            </tr>
+        </tbody>
+    </table>
+    <h5>Total Price: {{totalPrice | currency:"ILS"}}</h5>
+    <button class="btn btn-outline-info btn-sm" [disabled]="totalPrice<=0" routerLink="/order">Order</button>
+
+    <!-- <h1>cart:</h1>
+    <p>
+        {{cart | json}}
+
+    </p>
+    <h1>products:</h1>
+    <p>
+        {{cartProducts | json}}
+
+    </p> -->
+</div>

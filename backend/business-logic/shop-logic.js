@@ -13,7 +13,9 @@ function getAllProductsAsync() {
 async function addProductAsync(product) {
     return product.save();
 }
-
+function deleteProductAsync(ProductId) {
+    return ProductModel.findByIdAndDelete(ProductId);
+}
 async function updateProductAsync(newProduct) {
     const products = await getAllProductsAsync();
     const oldProduct = products.find(p => p._id.equals(newProduct._id));
@@ -89,6 +91,7 @@ function getAllCitesAsync() {
 module.exports = {
     getAllProductsAsync,
     addProductAsync,
+    deleteProductAsync,
     updateProductAsync,
     getCartAsync,
     addToCartAsync,

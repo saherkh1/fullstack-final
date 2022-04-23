@@ -1,0 +1,78 @@
+<div class="row">
+    <div class="col cart-card">
+        <div class="box">
+            <h3>cart</h3>
+
+            <table *ngIf="cart" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">price </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of cartProducts" class="table-active">
+                        <th scope="row">{{p.product.name }}</th>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                    {{p.quantity}}
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{p.itemsPrice | currency:"ILS"}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h5>Total Price: {{totalPrice | currency:"ILS"}}</h5>
+            <button class="btn btn-outline-info btn-sm" routerLink="/products">Continue Shopping</button>
+
+        </div>
+    </div>
+
+
+
+    <div class="col order-card">
+        <div class="box">
+            <form (submit)="placeOrder()" #formInfo="ngForm">
+                <fieldset>
+                    <legend>order</legend>
+
+                    <label class="form-label mt-4">City:</label>
+                    <select class="form-select" (change)="changeOccurred()" name="city" [(ngModel)]="order.cityId"
+                        required #cityInfo="ngModel">
+                        <option selected disabled value="">Select City</option>
+                        <option *ngFor="let c of cities" value="{{c._id}}">{{c.city}}</option>
+                    </select>
+                    <br>
+                    <label class="form-label mt-4">Street:</label>
+                    <input type="text" pattern="^[a-zA-Z]+(\s\d*)?$" class="form-control" (change)="changeOccurred()"
+                        name="street" [(ngModel)]="order.street" required #streetInfo="ngModel"
+                        placeholder="Enter Street">
+                    <span *ngIf="streetInfo.errors?.required && streetInfo.touched">Missing street. <br></span>
+                    <span *ngIf="streetInfo.errors?.pattern && streetInfo.touched">Street must start with a character.
+                        <br></span>
+
+                    <label class="form-label mt-4">Shipping Date:</label>
+                    <input type="date" class="form-control" (change)="changeOccurred()" name="ShippingDate"
+                        [(ngModel)]="order.shippingDate" required #shippingDateInfo="ngModel" appForbiddenDate>
+                    <span *ngIf="shippingDateInfo.invalid && streetInfo.touched">date must be in the
+                        future</span><br>
+
+                    <label class=" form-label mt-4">Credit Card:</label>
+                    <input type="number" class="form-control" (change)="changeOccurred()" name="ccNumber"
+                        [(ngModel)]="order.cardNumber" required pattern="^[0-9]{16}$" #ccNumberInfo="ngModel"
+                        placeholder="Enter Credit Card Number">
+                    <span *ngIf="ccNumberInfo.errors?.required && ccNumberInfo.touched">Missing Credit Card Number.
+                        <br></span>
+                    <span *ngIf="ccNumberInfo.errors?.pattern && ccNumberInfo.touched">Credit Card Number must not
+                        exceed 16 digits . <br></span>
+
+                    <button type="submit" class="btn btn-outline-primary"
+                        [disabled]="formInfo.form.invalid">Submit</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

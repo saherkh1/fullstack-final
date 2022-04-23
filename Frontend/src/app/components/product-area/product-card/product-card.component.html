@@ -1,0 +1,12 @@
+<div class=" container  ">
+    <h3 class="card-header">{{product.name}}</h3>
+    <div class="card-body">
+        <h5 class="card-title">Price: {{product.price | currency:'ILS'}}</h5>
+        <h6 class="card-subtitle text-muted">Category: {{product.category?.category}}</h6>
+    </div>
+    <a routerLink="/products/details/{{product._id}}"><img [src]="imageAddress"></a>
+    <br>
+    <button [hidden]="isAuthorized" class="btn btn-outline btn-sm" (click)="addToCart()">add to cart</button>
+    <button [hidden]="!isAuthorized" class="btn btn-outline btn-sm" (click)="deleteProduct()">DELETE</button>
+
+</div>

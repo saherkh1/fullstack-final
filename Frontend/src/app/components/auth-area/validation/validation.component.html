@@ -1,0 +1,17 @@
+<div class="box">
+    <h2>Verification</h2>
+    <form (submit)="Update()">
+        <label>First name: </label>
+        <input type="text" name="firstName" [(ngModel)]="user.firstName" />
+        <label>Last name: </label>
+        <input type="text" name="lastName" [(ngModel)]="user.lastName" />
+        <label>street: </label>
+        <input type="text" name="street" [(ngModel)]="user.street" />
+        <label>city: </label>
+        <select name="cityId" [(ngModel)]="user.cityId">
+            <option selected disabled value="">Select city</option>
+            <option *ngFor="let c of cites" value="{{c._id}}">{{c.city}}</option>
+        </select>
+        <button>Update</button>
+    </form>
+</div>

@@ -1,0 +1,17 @@
+div {
+    padding: auto;
+    display: center;
+}
+
+.cart-card {
+    width: 90%;
+}
+
+.order-card {
+    width: 90%;
+
+}
+.box{
+    width: 70%;
+    height: 100%;
+}

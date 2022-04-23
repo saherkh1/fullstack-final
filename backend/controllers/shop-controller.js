@@ -30,6 +30,17 @@ router.post("/products", handleImage, async (request, response) => {
         response.status(500).send(err.message);
     }
 });
+router.delete("/products/:ProductId", async (request, response) => {
+    try {
+        const ProductId = request.params.ProductId;
+        await shopLogic.deleteProductAsync(ProductId);
+        response.status(204).send();
+    }
+    catch (err) {
+        response.status(500).send(err.message);
+    }
+
+});
 //Update a Product
 router.put("/products/:productId", handleImage, async (request, response) => {
     try {

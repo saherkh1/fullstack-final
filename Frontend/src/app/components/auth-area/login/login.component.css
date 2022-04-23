@@ -1,0 +1,15 @@
+form {
+    width: 250px;
+}
+input {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 20px 0;
+}
+button {
+    width: 100%;
+    margin: 10px 0 20px 0;
+}
+h2 {
+    text-align: center;
+}

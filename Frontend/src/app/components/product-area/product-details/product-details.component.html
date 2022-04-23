@@ -1,0 +1,22 @@
+<div class="box" *ngIf="product">
+
+    <form>
+        <fieldset>
+            <legend>Product Details</legend>
+
+
+            <input type="text" readonly="" class="form-control-plaintext" value="Name: {{product.name}}">
+
+            <input type="text" readonly="" class="form-control-plaintext"
+                value="Price: {{product.price | currency:'ILS'}}">
+
+            <input type="text" readonly="" class="form-control-plaintext"
+                value="Category: {{product.category?.category}}">
+            <img [src]="imageAddress">
+            <br>
+            <button type="button" class="btn btn-outline-secondary" routerLink="/products">Back</button>
+            <button [hidden]="!isAuthorized" type="button" class="btn btn-outline-secondary"
+                routerLink="/products/edit/{{product._id}}">Edit</button>
+        </fieldset>
+    </form>
+</div>

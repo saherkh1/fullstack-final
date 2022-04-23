@@ -1,0 +1,24 @@
+<div [hidden]="isAuthorized">
+
+    <div class="row">
+        <div class="col-md-8">
+            <app-product-card class="box" *ngFor="let p of products" [product]="p"></app-product-card>
+        </div>
+        <div class="col-md-4 cart-element">
+            <app-cart></app-cart>
+        </div>
+    </div>
+</div>
+<div [hidden]="!isAuthorized">
+
+    <div class="row">
+        <a><button [hidden]="!isAuthorized" routerLink="/products/new" type="button"
+                class="btn btn-outline-primary btn-sm">
+                Add Product</button></a>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-product-card class="box" *ngFor="let p of products" [product]="p"></app-product-card>
+        </div>
+    </div>
+</div>

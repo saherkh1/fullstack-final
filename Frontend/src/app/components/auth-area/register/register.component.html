@@ -1,0 +1,35 @@
+<div class="box">
+    <h2>Register</h2>
+    <form [formGroup]="userForm" (submit)="register()">
+        <label>email: </label>
+        <input type="text" name="email" [formControl]="emailControl" />
+        <span *ngIf="emailControl.errors?.required && emailControl.touched">Missing
+            email<br></span>
+        <span *ngIf="emailControl.errors?.email && emailControl.touched">Email
+            must be
+            valid <br></span>
+
+        <label>Id Number: </label>
+        <input type="number" name="idNumber" [formControl]="idNumberControl" />
+        <span *ngIf="idNumberControl.errors?.required && idNumberControl.touched">Missing id number<br></span>
+        <span *ngIf="idNumberControl.errors?.pattern && idNumberControl.touched">Id number must be 9 digit<br></span>
+
+        <label>Password: </label>
+        <input type="password" name="password" [formControl]="passwordControl" />
+        <span *ngIf="passwordControl.errors?.required && passwordControl.touched">Missing password<br></span>
+        <span *ngIf="passwordControl.errors?.pattern && passwordControl.touched">Password length is between 4 to 16
+            characters<br></span>
+
+        <label>Re-enter password: </label>
+        <input type="password" name="confirmPass" [formControl]="confirmPassControl" />
+        <span *ngIf="confirmPassControl.errors?.required && confirmPassControl.touched">Missing password
+            confirmation<br></span>
+        <span
+            *ngIf="passwordForm.controls.confirmPass.errors?.confirmedValidator && confirmPassControl.touched">Passwords
+            must
+            match<br></span>
+
+        <button [disabled]="userForm.invalid && passwordForm.controls.confirmPass.invalid">Register</button>
+    </form>
+
+</div>
